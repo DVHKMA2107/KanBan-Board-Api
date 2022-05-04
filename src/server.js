@@ -1,5 +1,5 @@
 import express from 'express'
-import { mapOrder } from './utilities/sort.js'
+import { mapOrder } from '*/utilities/sort.js'
 
 const app = express()
 
