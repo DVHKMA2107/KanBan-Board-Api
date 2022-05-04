@@ -1,0 +1,29 @@
+{
+  "name": "kanban-board-api",
+  "version": "1.0.0",
+  "description": "Api for KanBan-Board",
+  "main": "src/server.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "eslint": "eslint src"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DVHKMA2107/KanBan-Board-Api.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/DVHKMA2107/KanBan-Board-Api/issues"
+  },
+  "homepage": "https://github.com/DVHKMA2107/KanBan-Board-Api#readme",
+  "dependencies": {
+    "express": "^4.18.1"
+  },
+  "devDependencies": {
+    "babel-eslint": "^10.1.0",
+    "eslint": "^8.14.0"
+  }
+}
