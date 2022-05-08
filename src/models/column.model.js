@@ -1,5 +1,5 @@
 import Joi from 'joi'
-import { ObjectId } from 'mongodb'
+import { ObjectID } from 'mongodb'
 import { getDB } from '*/config/mongodb'
 
 const columnCollectionName = 'columns'
@@ -20,11 +20,30 @@ const validateSchemma = async (data) => {
 
 const createNew = async (data) => {
   try {
-    const value = await validateSchemma(data)
+    const validatedValue = await validateSchemma(data)
+    const insertedValue = {
+      ...validatedValue,
+      boardId: ObjectID(validatedValue.boardId)
+    }
     const result = await getDB()
       .collection(columnCollectionName)
-      .insertOne(value)
+      .insertOne(insertedValue)
     return result.ops[0]
+  } catch (error) {
+    throw new Error(error)
+  }
+}
+
+const updateCardOrder = async (columnId, cardId) => {
+  try {
+    const result = await getDB()
+      .collection(columnCollectionName)
+      .findOneAndUpdate(
+        { _id: ObjectID(columnId) },
+        { $push: { cardOrder: cardId } },
+        { returnOriginal: false }
+      )
+    return result.value
   } catch (error) {
     throw new Error(error)
   }
@@ -35,7 +54,7 @@ const update = async (id, updateData) => {
     const result = await getDB()
       .collection(columnCollectionName)
       .findOneAndUpdate(
-        { _id: ObjectId(id) },
+        { _id: ObjectID(id) },
         { $set: updateData },
         { returnOriginal: false }
       )
@@ -46,4 +65,9 @@ const update = async (id, updateData) => {
   }
 }
 
-export const ColumnModel = { createNew, update }
+export const ColumnModel = {
+  columnCollectionName,
+  createNew,
+  update,
+  updateCardOrder
+}
