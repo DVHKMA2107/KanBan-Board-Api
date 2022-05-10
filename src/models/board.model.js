@@ -51,7 +51,8 @@ const getFullBoard = async (boardID) => {
       .aggregate([
         {
           $match: {
-            _id: ObjectID(boardID)
+            _id: ObjectID(boardID),
+            _destroy: false
           }
         },
         {

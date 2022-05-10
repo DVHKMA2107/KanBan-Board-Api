@@ -49,8 +49,12 @@ const updateCardOrder = async (columnId, cardId) => {
   }
 }
 
-const update = async (id, updateData) => {
+const update = async (id, data) => {
   try {
+    const updateData = {
+      ...data,
+      boardId: ObjectID(data.boardId)
+    }
     const result = await getDB()
       .collection(columnCollectionName)
       .findOneAndUpdate(
@@ -58,7 +62,6 @@ const update = async (id, updateData) => {
         { $set: updateData },
         { returnOriginal: false }
       )
-    console.log(result)
     return result.value
   } catch (error) {
     throw new Error(error)
