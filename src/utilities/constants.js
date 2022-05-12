@@ -8,5 +8,5 @@ export const HttpStatusCode = {
 
 export const WHITELIST_DOMAINS = [
   'http://localhost:3000',
-  'http://localhost:2107'
+  'https://kanbanboard-app.web.app'
 ]
