@@ -22,12 +22,10 @@ const bootServer = () => {
 
   app.use('/v1', apiV1)
 
-  app.listen(env.PORT, env.HOST_NAME, () => {
-    console.log(`Server is running at ${env.HOST_NAME}: ${env.PORT}/`)
-  })
-
   //Support heroku deploy
-  app.listen(process.env.PORT, () => {
-    console.log(`Server is running at port: ${process.env.PORT}/`)
+  app.listen(process.env.PORT || env.APP_PORT, () => {
+    console.log(
+      `Server is running at port: ${process.env.PORT || env.APP_PORT}/`
+    )
   })
 }

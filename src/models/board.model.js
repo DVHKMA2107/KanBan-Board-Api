@@ -1,5 +1,5 @@
 import Joi from 'joi'
-import { ObjectID } from 'mongodb'
+import { ObjectId } from 'mongodb'
 import { getDB } from '*/config/mongodb'
 import { ColumnModel } from './column.model'
 import { CardModel } from './card.model'
@@ -13,6 +13,17 @@ const boardCollectionSchemma = Joi.object({
   _destroy: Joi.boolean().default(false)
 })
 
+const findOneById = async (id) => {
+  try {
+    const result = await getDB()
+      .collection(boardCollectionName)
+      .findOne({ _id: ObjectId(id) })
+    return result
+  } catch (error) {
+    throw new Error(error)
+  }
+}
+
 const validateSchemma = async (data) => {
   return await boardCollectionSchemma.validateAsync(data, { abortEarly: false })
 }
@@ -23,7 +34,7 @@ const createNew = async (data) => {
     const result = await getDB()
       .collection(boardCollectionName)
       .insertOne(value)
-    return result.ops[0]
+    return result
   } catch (error) {
     throw new Error(error)
   }
@@ -34,9 +45,9 @@ const updateColumnOrder = async (boardId, newColumnId) => {
     const result = await getDB()
       .collection(boardCollectionName)
       .findOneAndUpdate(
-        { _id: ObjectID(boardId) },
+        { _id: ObjectId(boardId) },
         { $push: { columnOrder: newColumnId } },
-        { returnOriginal: false }
+        { returnDocument: 'after' }
       )
     return result.value
   } catch (error) {
@@ -51,7 +62,7 @@ const getFullBoard = async (boardID) => {
       .aggregate([
         {
           $match: {
-            _id: ObjectID(boardID),
+            _id: ObjectId(boardID),
             _destroy: false
           }
         },
@@ -85,9 +96,9 @@ const update = async (id, data) => {
     const result = await getDB()
       .collection(boardCollectionName)
       .findOneAndUpdate(
-        { _id: ObjectID(id) },
+        { _id: ObjectId(id) },
         { $set: updateData },
-        { returnOriginal: false }
+        { returnDocument: 'after' }
       )
     return result.value
   } catch (error) {
@@ -95,4 +106,10 @@ const update = async (id, data) => {
   }
 }
 
-export const BoardModel = { createNew, getFullBoard, updateColumnOrder, update }
+export const BoardModel = {
+  createNew,
+  getFullBoard,
+  updateColumnOrder,
+  update,
+  findOneById
+}
