@@ -3,8 +3,11 @@ import { cloneDeep } from 'lodash'
 
 const createNew = async (data) => {
   try {
-    const result = await BoardModel.createNew(data)
-    return result
+    const createdBoard = await BoardModel.createNew(data)
+    const getNewBoard = await BoardModel.findOneById(
+      createdBoard.insertedId.toString()
+    )
+    return getNewBoard
   } catch (error) {
     throw new Error(error)
   }
@@ -13,7 +16,6 @@ const createNew = async (data) => {
 const getFullBoard = async (id) => {
   try {
     const board = await BoardModel.getFullBoard(id)
-
     if (!board || !board.columns) {
       throw new Error('Board not found')
     }

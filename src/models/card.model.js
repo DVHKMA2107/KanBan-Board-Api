@@ -1,5 +1,5 @@
 import Joi from 'joi'
-import { ObjectID } from 'mongodb'
+import { ObjectId } from 'mongodb'
 import { getDB } from '*/config/mongodb'
 
 const cardCollectionName = 'cards'
@@ -13,6 +13,17 @@ const cardCollectionSchemma = Joi.object({
   _destroy: Joi.boolean().default(false)
 })
 
+const findOneById = async (id) => {
+  try {
+    const result = await getDB()
+      .collection(cardCollectionName)
+      .findOne({ _id: ObjectId(id) })
+    return result
+  } catch (error) {
+    throw new Error(error)
+  }
+}
+
 const validateSchemma = async (data) => {
   return await cardCollectionSchemma.validateAsync(data, {
     abortEarly: false
@@ -24,13 +35,13 @@ const createNew = async (data) => {
     const validatedValue = await validateSchemma(data)
     const insertedValue = {
       ...validatedValue,
-      boardId: ObjectID(validatedValue.boardId),
-      columnId: ObjectID(validatedValue.columnId)
+      boardId: ObjectId(validatedValue.boardId),
+      columnId: ObjectId(validatedValue.columnId)
     }
     const result = await getDB()
       .collection(cardCollectionName)
       .insertOne(insertedValue)
-    return result.ops[0]
+    return result
   } catch (error) {
     throw new Error(error)
   }
@@ -38,7 +49,7 @@ const createNew = async (data) => {
 
 const deleteMany = async (ids) => {
   try {
-    const transformIds = ids.map((id) => ObjectID(id))
+    const transformIds = ids.map((id) => ObjectId(id))
     const result = await getDB()
       .collection(cardCollectionName)
       .updateMany({ _id: { $in: transformIds } }, { $set: { _destroy: true } })
@@ -52,17 +63,17 @@ const update = async (id, data) => {
   try {
     const updateData = { ...data }
     if (data.boardId) {
-      updateData.boardId = ObjectID(data.boardId)
+      updateData.boardId = ObjectId(data.boardId)
     }
     if (data.columnId) {
-      updateData.columnId = ObjectID(data.columnId)
+      updateData.columnId = ObjectId(data.columnId)
     }
     const result = await getDB()
       .collection(cardCollectionName)
       .findOneAndUpdate(
-        { _id: ObjectID(id) },
+        { _id: ObjectId(id) },
         { $set: updateData },
-        { returnOriginal: false }
+        { returnDocument: 'after' }
       )
     return result.value
   } catch (error) {
@@ -70,4 +81,10 @@ const update = async (id, data) => {
   }
 }
 
-export const CardModel = { cardCollectionName, createNew, deleteMany, update }
+export const CardModel = {
+  cardCollectionName,
+  createNew,
+  deleteMany,
+  update,
+  findOneById
+}
